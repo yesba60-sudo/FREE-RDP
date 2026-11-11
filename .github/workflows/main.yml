@@ -1,0 +1,16 @@
+name: Windows RDP with Tailscale
+on: workflow_dispatch:
+jobs: build: runs-on: windows-latest steps: - name: Enable Remote Desktop run: | Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0 Enable-NetFirewallRule -DisplayGroup 'Remote Desktop'
+  - name: Install Tailscale
+    uses: tailscale/github-action@v3
+    with:
+      authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+  - name: Show Tailscale IP
+    run: tailscale ip -4
+
+  - name: Keep runner alive
+    run: |
+      while ($true) {
+        Start-Sleep -Seconds 60
+      }
